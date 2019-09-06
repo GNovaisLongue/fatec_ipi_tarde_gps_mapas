@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">fatec_ipi_tarde_gps_mapas</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_gps_no_app">sem GPS não posso te ajudar</string>
+</resources>
