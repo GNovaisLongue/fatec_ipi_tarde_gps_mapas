@@ -153,8 +153,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void CheckGpsStatus(){
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        try{
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+        catch(Exception e){
+            locationTextView.setText("Deu ruim");
+        }
+
     }
 
 }
