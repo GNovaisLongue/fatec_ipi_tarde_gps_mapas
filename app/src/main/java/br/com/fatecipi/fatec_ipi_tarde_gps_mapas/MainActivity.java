@@ -7,33 +7,34 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
-import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private double latitude;
+    private double longitude;
+    private TextView locationTextView;
     private static final int REQUEST_PERMISSION_GPS = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        locationTextView = findViewById(R.id.locationTextView);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -41,16 +42,23 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Uri uri = Uri.parse(String.format("geo: %f, %f?q=restaurantes", latitude,longitude));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                //deve conter, no minimo, o google play service para ter acesso
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
             }
         });
+
         locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         locationListener =  new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                String s = String.format("Lat: %f, Long: %f", latitude, longitude);
+                locationTextView.setText(s);
             }
 
             @Override
