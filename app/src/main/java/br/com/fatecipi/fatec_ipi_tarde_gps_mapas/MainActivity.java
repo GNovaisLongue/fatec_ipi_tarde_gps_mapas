@@ -1,9 +1,11 @@
 package br.com.fatecipi.fatec_ipi_tarde_gps_mapas;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -28,18 +30,51 @@ public class MainActivity extends AppCompatActivity {
     private double latitude;
     private double longitude;
     private TextView locationTextView;
+    private TextView deactivateGPSTextView;
+    private TextView activateGPSTextView;
+    boolean gpsStatus;
+    //AndroidManifest deve conter linha para permissao
     private static final int REQUEST_PERMISSION_GPS = 1001;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         locationTextView = findViewById(R.id.locationTextView);
+        deactivateGPSTextView = findViewById(R.id.deactivateGPSTextView);
+        activateGPSTextView = findViewById(R.id.activateGPSTextView);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //floatingButton
         FloatingActionButton fab = findViewById(R.id.fab);
+
+        activateGPSTextView.setOnClickListener(new View.OnClickListener() {
+            //ao clicar no texto, ativar GPS
+            @Override
+            public void onClick(View view) {
+                CheckGpsStatus();
+                if(gpsStatus == false) onStart();
+                else locationTextView.setText("Já ligado");
+                onStop();
+            }
+        });
+
+        deactivateGPSTextView.setOnClickListener(new View.OnClickListener() {
+            //ao clicar no texto, desativar GPS
+            @Override
+            public void onClick(View view) {
+                CheckGpsStatus();
+                if (gpsStatus) onStop();
+                else {
+//                    Toast.makeText(this, "Já desativado", Toast.LENGTH_SHORT).show();
+                    locationTextView.setText("Já desativado");
+                }
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
+            //ao clicar no botao, redireconar para google maps e pesquisar 'restaurante'
             @Override
             public void onClick(View view) {
                 Uri uri = Uri.parse(String.format("geo: %f, %f?q=restaurantes", latitude,longitude));
@@ -50,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         locationListener =  new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -63,17 +98,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
-
             }
 
             @Override
             public void onProviderEnabled(String s) {
-
             }
 
             @Override
             public void onProviderDisabled(String s) {
-
             }
         };
     }
@@ -87,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        Log.i("gps_mapas", "MainActivity:onStart");
         if(ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         ){
@@ -120,4 +151,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void CheckGpsStatus(){
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
 }

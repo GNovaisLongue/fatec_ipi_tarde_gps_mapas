@@ -30,4 +30,20 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <TextView
+        android:id="@+id/deactivateGPSTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:text="Desativar GPS"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/activateGPSTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|right"
+        android:text="Ativar GPS"
+        android:textSize="24dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
